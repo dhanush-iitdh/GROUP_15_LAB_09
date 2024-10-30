@@ -45,3 +45,14 @@ void systick_setting(void)
     STCTRL |= ENABLE | CLKINT;                            // ENABLE SYSTICK WITH SYSTEM CLOCK
     STCURRENT = 0;                                        // CLEAR STCURRENT REGUSTER
 }
+void delay(int us)
+{
+    STRELOAD = SYSTICK_RELOAD_VALUE(us);                  // RELOAD VALUE FOR REQUIRED DELAY
+    STCURRENT = 0;                                        // CLEAR STCURRENT
+    STCTRL |= ENABLE | CLKINT;                            // ENABLE SYSTICK WITH SYSTEM CLOCK
+    while ((STCTRL & (1 << 16)) == 0);                    // WAIT FOR FLAG TO SET
+    STCTRL &= ~ENABLE;                                    // STOP TIMER
+}
+
+#define MCP4725_ADDRESS 0x60                              // PERIPHERAL I2C ADDRESS
+
